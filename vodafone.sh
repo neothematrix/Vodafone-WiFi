@@ -24,7 +24,7 @@ if [ "$OPENWRT" = "yes" ];then
     
 else
 
-    LOG="echo"
+    LOG="echo ${LOGNAME}"
     
 fi
 
@@ -43,7 +43,7 @@ if test -f $DIR'/vodafone.txt';then
 
 else
 
-	$LOG "$LOGNAME" "wget failed to create file $DIR/vodafone.txt"
+	$LOG "wget failed to create file $DIR/vodafone.txt"
 
 fi
 
@@ -66,7 +66,7 @@ if [ "$REFRESH" = "notyet" ];then
 
 		if  ! -f $DIR'/cookies.txt';then
 
-			$LOG "$LOGNAME" "wget failed to create file $DIR/cookies.txt"
+			$LOG "wget failed to create file $DIR/cookies.txt"
 		
 		fi
 
@@ -78,23 +78,23 @@ if [ "$REFRESH" = "notyet" ];then
 
 		if [ "$SUCCESS" = "success" ];then
 
-			$LOG "$LOGNAME" "login successfull"
+			$LOG "login successfull"
 			
 		else
 
-			$LOG "$LOGNAME" "login failed"
+			$LOG "login failed"
 
 		fi
 	
 	else
 		
-		$LOG "$LOGNAME" "wget failed to create file $DIR/vodafone2.txt"
+		$LOG "wget failed to create file $DIR/vodafone2.txt"
 
 	fi
 
 else
 	
-    $LOG "$LOGNAME" "connection is still alive or your wireless connectivity has problems (check that you are connected to a Vodafone-Wi-Fi ap and/or your dns settings)"
+    $LOG "connection is still alive or your wireless connectivity has problems (check that you are connected to a Vodafone-Wi-Fi ap and/or your dns settings)"
         
 fi
 
