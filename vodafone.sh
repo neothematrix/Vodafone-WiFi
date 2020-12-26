@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #your login username urlencoded
 USERNAME=""
 #your login password urlencoded
