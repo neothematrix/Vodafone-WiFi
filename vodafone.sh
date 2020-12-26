@@ -20,7 +20,7 @@ fi
 
 if [ "$OPENWRT" = "yes" ];then
     
-    LOG="logger -p info -t $LOGNAME"
+    LOG="logger -p info -t ${LOGNAME}"
     
 else
 
