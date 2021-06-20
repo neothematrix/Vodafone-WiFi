@@ -3,6 +3,8 @@
 USERNAME=""
 #your login password urlencoded
 PASSWORD=""
+#set this parameter to yes if you are a fon roam user (that is, you pay for connecting to the hotspots and have a standalone account with vodafone)
+FONUSER=""
 #the directory where you have saved the script (can be either an absolute pathname or a relative one) e.g /my/path or my/path (no need for ending slash)
 DIR=""
 #the logname you wish to assign to the script when getting log messages (only for openwrt)
@@ -25,6 +27,16 @@ if [ "$OPENWRT" = "yes" ];then
 else
 
     LOG="echo ${LOGNAME}"
+    
+fi
+
+if[ "$FONUSER" = "YES" ];then
+
+    USER = "'userFake2='{$USERNAME}'&UserName=FON_ROAM%2F'$USERNAME"
+    
+else
+
+    USER= "'userFake='{$USERNAME}'&UserName=VF_IT%2F'$USERNAME"
     
 fi
 
@@ -58,11 +70,11 @@ if [ "$REFRESH" = "notyet" ];then
 	
 	if test -f $DIR'/cookies.txt';then
 
-		 wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --load-cookies=$DIR'/cookies.txt' --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data 'userFake='$USERNAME'&UserName=VF_IT%2F'$USERNAME'&Password='$PASSWORD'&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$IP
+		 wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --load-cookies=$DIR'/cookies.txt' --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data $USER'&Password='$PASSWORD'&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$IP
 	
 	else
 
-		wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data 'userFake='$USERNAME'&UserName=VF_IT%2F'$USERNAME'&Password='$PASSWORD'&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$IP
+		wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data $USER'&Password='$PASSWORD'&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$IP
 
 		if  ! -f $DIR'/cookies.txt';then
 
