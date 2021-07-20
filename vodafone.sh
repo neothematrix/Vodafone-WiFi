@@ -30,13 +30,13 @@ else
     
 fi
 
-if[ "$FONUSER" = "YES" ];then
+if [ "$FONUSER" = "YES" ];then
 
-    USER = "'userFake2='{$USERNAME}'&UserName=FON_ROAM%2F'$USERNAME"
+    USER='userFake2='{$USERNAME}'&UserName=FON_ROAM%2F'$USERNAME
     
 else
 
-    USER= "'userFake='{$USERNAME}'&UserName=VF_IT%2F'$USERNAME"
+    USER='userFake='{$USERNAME}'&UserName=VF_IT%2F'$USERNAME
     
 fi
 
