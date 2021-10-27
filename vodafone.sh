@@ -46,7 +46,7 @@ if [ "$SSL" = "no" ];then
 
 fi
 
-wget $WGETSSL --server-response --append-output=$DIR'/vodafone.txt' -qO/dev/null 'http://connectivitycheck.gstatic.com/'
+wget $WGETSSL --server-response --append-output=$DIR'/vodafone.txt' -qO/dev/null 'http://connectivitycheck.gstatic.com/generate_204'
 
 
 if test -f $DIR'/vodafone.txt';then
@@ -105,9 +105,17 @@ if [ "$REFRESH" = "notyet" ];then
 	fi
 
 else
-	
-    $LOG "connection is still alive or your wireless connectivity has problems (check that you are connected to a Vodafone-Wi-Fi ap and/or your dns settings)"
-        
+
+    if [ $(grep "204 No Content" $DIR'/vodafone.txt' -c) -gt 0 ]; then
+
+        $LOG "connection is still alive"
+
+    else
+    
+        $LOG "your wireless connectivity has problems (check that you are connected to a Vodafone-Wi-Fi ap and/or your dns settings)"
+    
+    fi
+    
 fi
 
 rm -rf $DIR'/vodafone.txt' $DIR'/vodafone2.txt'
