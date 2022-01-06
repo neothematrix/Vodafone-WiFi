@@ -17,27 +17,27 @@ SSL=""
 if [ "$DIR" = "" ];then
 
     DIR="."
-    
+
 fi
 
 if [ "$OPENWRT" = "yes" ];then
-    
+
     LOG="logger -p info -t ${LOGNAME}"
-    
+
 else
 
     LOG="echo ${LOGNAME}"
-    
+
 fi
 
 if [ "$FONUSER" = "YES" ];then
 
-    USER='userFake2='{$USERNAME}'&UserName=FON_ROAM%2F'$USERNAME
-    
+    USER='userFake2='$USERNAME'&UserName=FON_ROAM%2F'$USERNAME
+
 else
 
-    USER='userFake='{$USERNAME}'&UserName=VF_IT%2F'$USERNAME
-    
+    USER='userFake='$USERNAME'&UserName=VF_IT%2F'$USERNAME
+
 fi
 
 if [ "$SSL" = "no" ];then
@@ -63,27 +63,28 @@ if [ "$REFRESH" = "notyet" ];then
 
 	UAMIP=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f2)
 	UAMPORT=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f3)
-	NASID=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f4)
-	CHALLENGE=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f5)
-	MAC=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f6)
-	IP=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f7)
-	
+	CHALLENGE=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f4)
+	MAC=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f5)
+	IP=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f6)
+	NASID=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f7)
+	USERURL=$(cat $DIR'/vodafone.txt' | grep "Location: https://it.portal.vodafone-wifi.com/jcp/it?res=notyet" | cut -d\& -f8)
+
 	if test -f $DIR'/cookies.txt';then
 
-		 wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --load-cookies=$DIR'/cookies.txt' --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data $USER'&Password='$PASSWORD'&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$IP
-	
+		 wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --load-cookies=$DIR'/cookies.txt' --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data $USER'&Password='$PASSWORD'&rememberMe=true&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$USERURL
+
 	else
 
-		wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data $USER'&Password='$PASSWORD'&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$IP
+		wget $WGETSSL --save-cookies $DIR'/cookies.txt' --keep-session-cookies --server-response --append-output=$DIR'/vodafone2.txt' -qO/dev/null --post-data $USER'&Password='$PASSWORD'&rememberMe=true&_rememberMe=on' 'https://it.portal.vodafone-wifi.com/jcp/it?res=login&'$NASID'&'$UAMIP'&'$UAMPORT'&'$MAC'&'$CHALLENGE'&'$USERURL
 
-		if  ! -f $DIR'/cookies.txt';then
+		if test ! -f $DIR'/cookies.txt';then
 
 			$LOG "wget failed to create file $DIR/cookies.txt"
-		
+
 		fi
 
 	fi
-	
+
 	if test -f $DIR'/vodafone2.txt';then
 
 		SUCCESS=$(cat $DIR'/vodafone2.txt' | grep "Location: https:" | cut -d\& -f1 | cut -d= -f2)
@@ -91,31 +92,27 @@ if [ "$REFRESH" = "notyet" ];then
 		if [ "$SUCCESS" = "success" ];then
 
 			$LOG "login successfull"
-			
+
 		else
 
 			$LOG "login failed"
 
 		fi
-	
+
 	else
-		
+
 		$LOG "wget failed to create file $DIR/vodafone2.txt"
 
 	fi
 
 else
 
-    if [ $(grep "204 No Content" $DIR'/vodafone.txt' -c) -gt 0 ]; then
+    if [ $(grep "204 No Content" $DIR'/vodafone.txt' -c) -lt 1 ]; then
 
-        $LOG "connection is still alive"
+        $LOG "connection failed"
 
-    else
-    
-        $LOG "your wireless connectivity has problems (check that you are connected to a Vodafone-Wi-Fi ap and/or your dns settings)"
-    
     fi
-    
+
 fi
 
 rm -rf $DIR'/vodafone.txt' $DIR'/vodafone2.txt'
